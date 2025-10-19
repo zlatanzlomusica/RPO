@@ -1,9 +1,4 @@
-﻿/*
- *  ASCII Text Styler + history file (no colour)
- *  g++ -std=c++17 text_styler.cpp -o text_styler
- *  cl /std:c++17 text_styler.cpp
- */
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -11,7 +6,6 @@
 
 using namespace std;
 
-/* ---------- history helpers ---------- */
 struct History
 {
     int style = 1;
@@ -31,7 +25,6 @@ void saveHistory(int style, int txtLen)
     if (out) out << style << ' ' << txtLen << '\n';
 }
 
-/* ---------- shape builders (unchanged) ---------- */
 vector<string> buildHeart(const string&)
 {
     return {
@@ -93,7 +86,6 @@ vector<string> buildStar(const string&)
     };
 }
 
-/* ---------- centre text ---------- */
 void centreText(vector<string>& canvas, const string& text)
 {
     if (canvas.empty()) return;
@@ -111,7 +103,6 @@ void centreText(vector<string>& canvas, const string& text)
     line.replace(pad, len, text);
 }
 
-/* ---------- save ---------- */
 void saveFile(const vector<string>& lines)
 {
     ofstream out("output.txt");
@@ -119,7 +110,6 @@ void saveFile(const vector<string>& lines)
     cout << "\nSaved to output.txt\n";
 }
 
-/* ---------- main ---------- */
 int main()
 {
     const vector<pair<string, vector<string>(*)(const string&)>> styles = {
