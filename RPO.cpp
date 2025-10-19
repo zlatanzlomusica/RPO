@@ -1,6 +1,7 @@
 ﻿/*
- *  ASCII Text Styler – centred frames, works everywhere
- *  g++ -std=c++17 -O2 text_styler.cpp -o text_styler
+ *  ASCII Text Styler + history file (no colour)
+ *  g++ -std=c++17 text_styler.cpp -o text_styler
+ *  cl /std:c++17 text_styler.cpp
  */
 #include <iostream>
 #include <fstream>
@@ -10,7 +11,27 @@
 
 using namespace std;
 
-/* ---------- builders return the *frame* as ASCII lines ---------- */
+/* ---------- history helpers ---------- */
+struct History
+{
+    int style = 1;
+    int txtLen = 0;
+};
+History loadHistory()
+{
+    History h;
+    ifstream in("history.txt");
+    if (in) in >> h.style >> h.txtLen;
+    if (h.style < 1 || h.style > 5) h.style = 1;
+    return h;
+}
+void saveHistory(int style, int txtLen)
+{
+    ofstream out("history.txt");
+    if (out) out << style << ' ' << txtLen << '\n';
+}
+
+/* ---------- shape builders (unchanged) ---------- */
 vector<string> buildHeart(const string&)
 {
     return {
@@ -21,7 +42,6 @@ vector<string> buildHeart(const string&)
         "  '-----------------------'  "
     };
 }
-
 vector<string> buildArrow(const string&)
 {
     return {
@@ -35,7 +55,6 @@ vector<string> buildArrow(const string&)
         "       ||           "
     };
 }
-
 vector<string> buildDiamond(const string&)
 {
     return {
@@ -50,7 +69,6 @@ vector<string> buildDiamond(const string&)
         "     \\/     "
     };
 }
-
 vector<string> buildBanner(const string&)
 {
     return {
@@ -61,7 +79,6 @@ vector<string> buildBanner(const string&)
         "'---------------------------'"
     };
 }
-
 vector<string> buildStar(const string&)
 {
     return {
@@ -76,34 +93,30 @@ vector<string> buildStar(const string&)
     };
 }
 
-/* ---------- centre text inside the shape ---------- */
+/* ---------- centre text ---------- */
 void centreText(vector<string>& canvas, const string& text)
 {
-    size_t h = canvas.size();
-    if (h == 0) return;
-    size_t mid = h / 2;
-
+    if (canvas.empty()) return;
+    size_t mid = canvas.size() / 2;
     string& line = canvas[mid];
-    size_t total = line.size();
-    size_t textLen = text.size();
 
-    if (textLen >= total) {            // too long – truncate
+    size_t total = line.size();
+    size_t len = text.size();
+
+    if (len >= total) {
         line = text.substr(0, total);
         return;
     }
-
-    size_t pad = (total - textLen) / 2;
-    line.replace(pad, textLen, text);
+    size_t pad = (total - len) / 2;
+    line.replace(pad, len, text);
 }
-
-
 
 /* ---------- save ---------- */
 void saveFile(const vector<string>& lines)
 {
     ofstream out("output.txt");
     for (auto& l : lines) out << l << '\n';
-    cout << "\nSaved to output.txt – open in Notepad to verify alignment.\n";
+    cout << "\nSaved to output.txt\n";
 }
 
 /* ---------- main ---------- */
@@ -117,18 +130,19 @@ int main()
         {"Star",    buildStar}
     };
 
-    cout << "Pick a style:\n";
+    History h = loadHistory();
+
+    cout << "Pick a style (last used " << h.style << "):\n";
     for (size_t i = 0; i < styles.size(); ++i)
-        cout << "  " << i + 1 << ") " << styles[i].first << '\n';
+        cout << "  " << (int(i + 1) == h.style ? ">" : " ")
+        << i + 1 << ") " << styles[i].first << '\n';
 
     int choice;
-    cout << "Enter 1-" << styles.size() << ": ";
-    if (!(cin >> choice) || choice < 1 || (size_t)choice > styles.size()) {
-        cerr << "Invalid choice.\n";
-        return 1;
-    }
+    cout << "Enter 1-" << styles.size() << " (0 = keep last): ";
+    if (!(cin >> choice) || choice < 0 || choice > 5) choice = h.style;
+    if (choice == 0) choice = h.style;
 
-    cin.ignore(); // flush newline left by >>
+    cin.ignore();
     cout << "Enter your text: ";
     string text;
     getline(cin, text);
@@ -136,9 +150,10 @@ int main()
     vector<string> canvas = styles[choice - 1].second(text);
     centreText(canvas, text);
 
-    cout << "\nPreview:\n";
+    cout << '\n';
     for (auto& l : canvas) cout << l << '\n';
 
     saveFile(canvas);
+    saveHistory(choice, static_cast<int>(text.size()));
     return 0;
 }
