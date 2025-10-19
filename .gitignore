@@ -1,11 +1,8 @@
 x64/
-Debug/
-Release/
+*.vcxproj
 *.vcxproj.user
-*.suo
+*.vcxproj.filters
 *.exe
-*.dll
-*.log
 *.tmp
 output.txt
 history.txt
