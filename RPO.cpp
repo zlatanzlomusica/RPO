@@ -146,7 +146,4 @@ int main()
     saveFile(canvas);
     saveHistory(choice, static_cast<int>(text.size()));
     return 0;
-
-} //master
-
-
+} //final
