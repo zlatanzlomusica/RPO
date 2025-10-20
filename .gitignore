@@ -8,4 +8,5 @@ output.txt
 history.txt
 RPO-copy/ 
 helloworld-fork/
-hellorepo/
+hellorepo/config.env 
+"*.env" 
