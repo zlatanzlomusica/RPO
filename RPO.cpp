@@ -86,7 +86,7 @@ vector<string> buildStar(const string&)
     };
 }
 
-void centreText(vector<string>& canvas, const string& text)
+void centreText(vector<string>& canvas, const string& text) //Attempt at fixing aligment issue
 {
     if (canvas.empty()) return;
     size_t mid = canvas.size() / 2;
@@ -147,4 +147,4 @@ int main()
     saveHistory(choice, static_cast<int>(text.size()));
     return 0;
 }
-// fetch test
+// push test
