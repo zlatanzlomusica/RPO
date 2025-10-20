@@ -147,8 +147,4 @@ int main()
     saveHistory(choice, static_cast<int>(text.size()));
     return 0;
 }
-//edit// branchB  
-// tempsave 
-// tempsave 
-// tempsave 
-// amend demo 
+
